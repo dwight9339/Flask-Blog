@@ -1,13 +1,12 @@
-from flask import Flask, render_template, redirect, flash, url_for, request
+from flask import Flask, render_template, redirect, flash, url_for, request, abort
 from dadjokedepot import app, bcrypt, db
-from dadjokedepot.forms import RegistrationForm, LoginForm
+from dadjokedepot.forms import RegistrationForm, LoginForm, PostForm
 from dadjokedepot.models import User, Post
 from flask_login import login_user, logout_user, current_user, login_required
 
-posts = []
-
 @app.route("/")
 def home():
+    posts = Post.query.all()
     return render_template("home.html", posts=posts)
 
 @app.route("/about")
@@ -58,7 +57,46 @@ def logout():
 def account():
     return render_template("accountpage.html", title="Account")
 
-@app.route("/post/new")
+@app.route("/post/new", methods=["GET", "POST"])
 @login_required
 def new_post():
-    return render_template("newpost.html", title="New Post")
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(jokeText=form.joke.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash("Joke submitted!", "success")
+        return redirect(url_for("home"))
+    return render_template("newpost.html", title="New Post", form=form, legend="Think you're punny? Submit a Joke!")
+
+@app.route("/post/<int:post_id>", methods=["GET", "POST"])
+def view_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template("viewpost.html", post=post)
+
+@app.route("/post/<int:post_id>/update", methods=["GET", "POST"])
+@login_required
+def update_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if (post.author != current_user):
+        abort(403)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.jokeText = form.joke.data
+        db.session.commit()
+        flash("Joke updated!", "success")
+        return redirect(url_for("view_post", post_id=post.id))
+    elif (request.method == "GET"):
+        form.joke.data = post.jokeText
+    return render_template("newpost.html", title="Update Post", form=form, legend="Update Post")
+
+@app.route("/post/<int:post_id>/delete", methods=["POST"])
+@login_required
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if (post.author != current_user):
+        abort(403)
+    db.session.delete(post)
+    db.session.commit()
+    flash("Joke Deleted", "success")
+    return redirect(url_for("home"))
