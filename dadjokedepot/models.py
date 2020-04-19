@@ -37,6 +37,8 @@ class Post(db.Model):
     jokeText = db.Column(db.Text, nullable = False)
     dateCreated = db.Column(db.DateTime, nullable = False, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    likes = db.Column(db.Integer, nullable=False, default=0)
+    dislikes = db.Column(db.Integer, nullable=False, default=0)
 
     def __repr__(self):
         return f"User('{self.id}', '{self.dateCreated}'')"
