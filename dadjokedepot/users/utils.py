@@ -20,7 +20,7 @@ def save_picture(form_picture):
 
 def send_reset_email(user):
     token = user.get_reset_token()
-    msg = Message("Password Reset Request", sender="noreply@demo.com", recipients=[user.email])
+    msg = Message("Password Reset Request", sender="noreply@dadjokedepot.com", recipients=[user.email])
     msg.body = f'''
     Follow this link to reset your password
     {url_for('users.reset_token', token=token, _external=True)}

@@ -81,7 +81,7 @@ def reset_request():
     if (current_user.is_authenticated):
         return redirect(url_for("main.home"))
 
-    form = RequestPasswordResetForm()
+    form = RequestResetForm()
     if (form.validate_on_submit()):
         user = User.query.filter_by(email=form.email.data).first()
         send_reset_email(user)
@@ -96,7 +96,7 @@ def reset_token(token):
 
     user = User.verify_reset_token(token)
     if user is None:
-        flash("Invalid token", "danger")
+        flash("Invalid token. Please provide a valid email and try again.", "danger")
         return redirect(url_for("users.reset_request"))
     form = ResetPasswordForm()
     if (form.validate_on_submit()):
@@ -104,6 +104,6 @@ def reset_token(token):
         user.password = hashedpw
         db.session.commit()
         flash(f'Password reset successful', 'success')
-        return redirect(url_for("main.home"))
+        return redirect(url_for("users.login"))
         
     return render_template("resetPassword.html", title="Reset Password", form=form)

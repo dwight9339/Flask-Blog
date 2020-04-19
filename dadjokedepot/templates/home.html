@@ -1,21 +1,22 @@
 {% extends "layout.html" %}
 {% block content %}
-    {% for post in posts.items %}
-        <article class="media content-section">
-            <div class="media-body">
-                <p class="article-content">{{ post.jokeText }}</p>
-                <div class="article-metadata">
-                    <div class="d-flex flex-row">
-                        <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.imageFile) }}">
-                        <a href="{{ url_for('users.user_page', username=post.author.username) }}" class="text-muted">{{ post.author.username }}</a>
-                        <small class="text-muted">{{ post.dateCreated.strftime("%m-%d-%Y") }}</small>
-                    </div>
-                    <div class="d-flex flex-row-reverse">
-                        <a href="{{ url_for('posts.view_post', post_id=post.id) }}" class="text-muted">View</a>
-                    </div>
-                </div>  
-            </div>
-        </article>
+    <div id="posts">
+        {% for post in posts.items %}
+            <article class="media content-section">
+                <div class="media-body">
+                    <p class="article-content">{{ post.jokeText }}</p>
+                    <div class="article-metadata">
+                        <div class="d-flex flex-row">
+                            <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.imageFile) }}">
+                            <a href="{{ url_for('users.user_page', username=post.author.username) }}" class="text-muted">{{ post.author.username }}</a>
+                            <small class="text-muted">{{ post.dateCreated.strftime("%m-%d-%Y") }}</small>
+                        </div>
+                        <div class="d-flex flex-row-reverse">
+                            <a href="{{ url_for('posts.view_post', post_id=post.id) }}" class="text-muted">View</a>
+                        </div>
+                    </div>  
+                </div>
+            </article>
     {% endfor %}
     {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
         {% if page_num %}
@@ -28,4 +29,5 @@
             ...
         {% endif %}
     {% endfor %}
+    </div>
 {% endblock content %}
