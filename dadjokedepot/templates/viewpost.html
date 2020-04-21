@@ -14,7 +14,50 @@
         </div>  
     </div>
 </article>
+{% if current_user.is_authenticated %}
+<div class="content-section">
+  <form method="POST" action="">
+      {{ form.hidden_tag() }}
 
+      <fieldset class="form-group">
+          <legend class="border-bottom mb-4">{{ legend }}</legend>
+          <div class="form-group">
+              {% if form.content.errors %}
+                  {{ form.content(class="from-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in form.content.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ form.content(class="from-control form-control-lg") }}
+              {% endif %} 
+          </div>
+      </fieldset>
+      <div class="form-group">
+          {{ form.submit(class="btn btn-outline-info") }}
+      </div>
+  </form>
+</div>
+{% endif %}
+{% if post.comments.count() > 0 %}
+  <h5>Comments:</h5>
+  {% for comment in post.comments %}
+    <article class="content-section">
+      <div class="media-body">
+        <p class="article-content">{{ comment.content }}</p>
+      </div>
+      <div class="article-metadata">
+        <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + comment.user.imageFile) }}">
+        <a href="#" class="text-muted">{{ comment.user.username }}</a>
+        <small class="text-muted">{{ comment.timestamp.strftime("%m-%d-%Y") }}</small>
+        {% if current_user == comment.user %}
+          <a href="{{ url_for('posts.delete_comment', comment_id=comment.id) }}">Delete</a>
+        {% endif %}
+      </div>
+    </article>
+  {% endfor %}
+{% endif %}
 <!-- Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="delete" aria-hidden="true">
     <div class="modal-dialog" role="document">

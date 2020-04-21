@@ -15,10 +15,9 @@ class User(db.Model, UserMixin):
     imageFile = db.Column(db.String(20), nullable=False, default="default.jpg")
     password = db.Column(db.String(60), nullable=False)
     posts = db.relationship("Post", backref="author", lazy=True)
-    liked = db.relationship(
-        'PostLike',
-        foreign_keys='PostLike.user_id',
-        backref='user', lazy='dynamic')
+    liked = db.relationship('PostLike', foreign_keys='PostLike.user_id', backref='user', lazy='dynamic')
+    disliked = db.relationship('PostDislike', foreign_keys='PostDislike.user_id', backref='user', lazy='dynamic')
+    commented = db.relationship("Comment", foreign_keys="Comment.user_id", backref="user", lazy="dynamic")
 
     def like_post(self, post):
         if not self.has_liked_post(post) and not self.has_disliked_post(post):
@@ -75,6 +74,7 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     likes = db.relationship('PostLike', backref='post', lazy='dynamic')
     dislikes = db.relationship('PostDislike', backref='post', lazy='dynamic')
+    comments = db.relationship('Comment', foreign_keys="Comment.post_id", backref='post', lazy='dynamic')
 
     def __repr__(self):
         return f"User('{self.id}', '{self.dateCreated}'')"
@@ -86,5 +86,12 @@ class PostLike(db.Model):
 
 class PostDislike(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"))
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, nullable = False, default=datetime.utcnow)
+    content = db.Column(db.Text, nullable = False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     post_id = db.Column(db.Integer, db.ForeignKey("post.id"))

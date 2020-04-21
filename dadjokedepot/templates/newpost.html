@@ -7,15 +7,15 @@
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">{{ legend }}</legend>
             <div class="form-group">
-                {% if form.joke.errors %}
-                    {{ form.joke(class="from-control form-control-lg is-invalid") }}
+                {% if form.content.errors %}
+                    {{ form.content(class="from-control form-control-lg is-invalid") }}
                     <div class="invalid-feedback">
-                        {% for error in form.joke.errors %}
+                        {% for error in form.content.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
                 {% else %}
-                    {{ form.joke(class="from-control form-control-lg") }}
+                    {{ form.content(class="from-control form-control-lg") }}
                 {% endif %} 
             </div>
         </fieldset>

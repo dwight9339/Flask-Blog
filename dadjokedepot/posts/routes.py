@@ -2,7 +2,7 @@ from flask import (render_template, url_for, flash,
                    redirect, request, abort, Blueprint)
 from flask_login import current_user, login_required
 from dadjokedepot import db
-from dadjokedepot.models import Post
+from dadjokedepot.models import Post, Comment
 from dadjokedepot.posts.forms import PostForm
 posts = Blueprint("posts", __name__)
 
@@ -12,7 +12,7 @@ posts = Blueprint("posts", __name__)
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(jokeText=form.joke.data, author=current_user)
+        post = Post(jokeText=form.content.data, author=current_user)
         db.session.add(post)
         db.session.commit()
         flash("Joke submitted!", "success")
@@ -22,7 +22,14 @@ def new_post():
 @posts.route("/post/<int:post_id>", methods=["GET", "POST"])
 def view_post(post_id):
     post = Post.query.get_or_404(post_id)
-    return render_template("viewpost.html", post=post)
+    form = PostForm()
+    if form.validate_on_submit():
+        comment = Comment(content=form.content.data, user_id=current_user.id, post_id=post.id)
+        db.session.add(comment)
+        db.session.commit()
+        flash("Added comment", "success")
+        return redirect(url_for("posts.view_post", post_id=post.id, form=form))
+    return render_template("viewpost.html", post=post, form=form)
 
 @posts.route("/post/<int:post_id>/update", methods=["GET", "POST"])
 @login_required
@@ -32,12 +39,12 @@ def update_post(post_id):
         abort(403)
     form = PostForm()
     if form.validate_on_submit():
-        post.jokeText = form.joke.data
+        post.jokeText = form.content.data
         db.session.commit()
         flash("Joke updated!", "success")
         return redirect(url_for("posts.view_post", post_id=post.id))
     elif (request.method == "GET"):
-        form.joke.data = post.jokeText
+        form.content.data = post.jokeText
     return render_template("newpost.html", title="Update Post", form=form, legend="Update Post")
 
 @posts.route("/post/<int:post_id>/delete", methods=["POST"])
@@ -50,6 +57,17 @@ def delete_post(post_id):
     db.session.commit()
     flash("Joke Deleted", "success")
     return redirect(url_for("main.home"))
+
+@posts.route("/post/deletecomment/<int:comment_id>")
+@login_required
+def delete_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    if (comment.user != current_user):
+        abort(403)
+    db.session.delete(comment)
+    db.session.commit()
+    flash("Comment deleted", "success")
+    return redirect(request.referrer)
 
 @posts.route('/like/<int:post_id>/<action>')
 @login_required
@@ -74,3 +92,4 @@ def dislike_action(post_id, action):
         current_user.undislike_post(post)
         db.session.commit()
     return redirect(request.referrer)
+
