@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1 class="mb-3">{{ user.username }}</h1>
+    <h6>Member since: {{ user.dateJoined.strftime("%m-%d-%Y") }}</h6>
     <h2>Posts</h2>
     {% for post in posts.items %}
         <article class="media content-section">
