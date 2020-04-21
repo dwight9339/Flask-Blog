@@ -74,7 +74,8 @@ def user_page(username):
     posts = Post.query.filter_by(author=user)\
                       .order_by(Post.dateCreated.desc())\
                       .paginate(page=page, per_page=5)
-    return render_template("userpage.html", title=username, posts=posts, user=user)
+    image_file = url_for('static', filename='profile_pics/' + user.imageFile)
+    return render_template("userpage.html", title=username, posts=posts, user=user, image_file=image_file)
 
 @users.route("/reset_password", methods=["GET", "POST"])
 def reset_request():

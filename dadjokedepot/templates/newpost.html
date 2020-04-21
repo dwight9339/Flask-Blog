@@ -8,14 +8,14 @@
             <legend class="border-bottom mb-4">{{ legend }}</legend>
             <div class="form-group">
                 {% if form.content.errors %}
-                    {{ form.content(class="from-control form-control-lg is-invalid") }}
+                    {{ form.content(class="form-control form-control-lg is-invalid") }}
                     <div class="invalid-feedback">
                         {% for error in form.content.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
                 {% else %}
-                    {{ form.content(class="from-control form-control-lg") }}
+                    {{ form.content(class="form-control form-control-lg") }}
                 {% endif %} 
             </div>
         </fieldset>

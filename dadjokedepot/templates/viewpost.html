@@ -5,17 +5,18 @@
         <p class="article-content">{{ post.jokeText }}</p>
         <div class="article-metadata">
             <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.imageFile) }}">
-            <a href="#" class="text-muted">{{ post.author.username }}</a>
-            <small class="text-muted">{{ post.dateCreated.strftime("%m-%d-%Y") }}</small>
+            <a href="{{ url_for('users.user_page', username=post.author.username) }}" class="text-muted">{{ post.author.username }}</a>
+            <small class="text-muted ml-2">{{ post.dateCreated.strftime("%m-%d-%Y") }}</small>
             {% if post.author == current_user %}
-                <a href="{{ url_for('posts.update_post', post_id=post.id) }}" class="text-muted">Update</a>
-                <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                <a href="{{ url_for('posts.update_post', post_id=post.id) }}" class="text-muted ml-2">Update</a>
+                <button type="button" class="btn btn-danger btn-sm mb-2 ml-2" data-toggle="modal" data-target="#deleteModal">Delete</button>
             {% endif %}
         </div>  
     </div>
 </article>
 {% if current_user.is_authenticated %}
 <div class="content-section">
+  <h5>Write a comment</h5>
   <form method="POST" action="">
       {{ form.hidden_tag() }}
 
@@ -23,14 +24,14 @@
           <legend class="border-bottom mb-4">{{ legend }}</legend>
           <div class="form-group">
               {% if form.content.errors %}
-                  {{ form.content(class="from-control form-control-lg is-invalid") }}
+                  {{ form.content(class="form-control form-control-lg is-invalid") }}
                   <div class="invalid-feedback">
                       {% for error in form.content.errors %}
                           <span>{{ error }}</span>
                       {% endfor %}
                   </div>
               {% else %}
-                  {{ form.content(class="from-control form-control-lg") }}
+                  {{ form.content(class="form-control form-control-lg") }}
               {% endif %} 
           </div>
       </fieldset>
@@ -49,10 +50,10 @@
       </div>
       <div class="article-metadata">
         <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + comment.user.imageFile) }}">
-        <a href="#" class="text-muted">{{ comment.user.username }}</a>
-        <small class="text-muted">{{ comment.timestamp.strftime("%m-%d-%Y") }}</small>
+        <a href="{{ url_for('users.user_page', username=post.author.username) }}" class="text-muted">{{ comment.user.username }}</a>
+        <small class="text-muted ml-2">{{ comment.timestamp.strftime("%m-%d-%Y") }}</small>
         {% if current_user == comment.user %}
-          <a href="{{ url_for('posts.delete_comment', comment_id=comment.id) }}">Delete</a>
+          <a class="ml-2" href="{{ url_for('posts.delete_comment', comment_id=comment.id) }}">Delete</a>
         {% endif %}
       </div>
     </article>

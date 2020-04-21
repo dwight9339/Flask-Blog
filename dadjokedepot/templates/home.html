@@ -9,12 +9,24 @@
                         <div class="d-flex flex-row">
                             <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.imageFile) }}">
                             <a href="{{ url_for('users.user_page', username=post.author.username) }}" class="text-muted">{{ post.author.username }}</a>
-                            <small class="text-muted">{{ post.dateCreated.strftime("%m-%d-%Y") }}</small>
-                        </div>
-                        <div class="d-flex flex-row-reverse">
-                            <a href="{{ url_for('posts.view_post', post_id=post.id) }}" class="text-muted">View</a>
-                            <small id="dislikeCount">{{ post.dislikes.count() }}</small>
-                            <div id="dislikeButton">
+                            <p class="text-muted ml-4">{{ post.dateCreated.strftime("%m-%d-%Y") }}</p>
+                            <div id="likeButton" class="ml-4">
+                                {% if current_user.is_authenticated and current_user.has_liked_post(post) %}
+                                    <a href="{{ url_for('posts.like_action', post_id=post.id, action='unlike') }}">
+                                        <svg class="bi bi-caret-up-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 00.753-1.659l-4.796-5.48a1 1 0 00-1.506 0z"/>
+                                        </svg>
+                                    </a>
+                                {% else %}
+                                    <a href="{{ url_for('posts.like_action', post_id=post.id, action='like') }}">
+                                        <svg class="bi bi-caret-up" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M3.204 11L8 5.519 12.796 11H3.204zm-.753-.659l4.796-5.48a1 1 0 011.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 01-.753-1.659z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <small id="likeCount" class="ml-1">{{ post.likes.count() }}</small>
+                            <div id="dislikeButton" class="ml-1">
                             {% if current_user.is_authenticated and current_user.has_disliked_post(post) %}
                                 <a href="{{ url_for('posts.dislike_action', post_id=post.id, action='undislike') }}">
                                     <svg class="bi bi-caret-down-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -29,22 +41,8 @@
                                 </a>
                             {% endif %}
                             </div>
-                            <small id="likeCount">{{ post.likes.count() }}</small>
-                            <div id="likeButton">
-                            {% if current_user.is_authenticated and current_user.has_liked_post(post) %}
-                                <a href="{{ url_for('posts.like_action', post_id=post.id, action='unlike') }}">
-                                    <svg class="bi bi-caret-up-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 00.753-1.659l-4.796-5.48a1 1 0 00-1.506 0z"/>
-                                    </svg>
-                                </a>
-                            {% else %}
-                                <a href="{{ url_for('posts.like_action', post_id=post.id, action='like') }}">
-                                    <svg class="bi bi-caret-up" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M3.204 11L8 5.519 12.796 11H3.204zm-.753-.659l4.796-5.48a1 1 0 011.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 01-.753-1.659z" clip-rule="evenodd"/>
-                                    </svg>
-                                </a>
-                            {% endif %}
-                            </div>
+                            <small id="dislikeCount" class="ml-1">{{ post.dislikes.count() }}</small>
+                            <a href="{{ url_for('posts.view_post', post_id=post.id) }}" class="text-muted ml-4">View Post</a>
                         </div>
                     </div>  
                 </div>
