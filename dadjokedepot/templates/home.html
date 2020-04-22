@@ -1,5 +1,11 @@
 {% extends "layout.html" %}
 {% block content %}
+    <div class="mb-2">
+        <a href="{{ url_for('main.home') }}">Newest</a>
+        <a class="ml-2" href="{{ url_for('main.oldest') }}">Oldest</a>
+        <a class="ml-2" href="{{ url_for('main.mostpopular') }}">Most Popular</a>
+        <a class="ml-2" href="{{ url_for('main.mosthated') }}">Most Hated</a>
+    </div>
     <div id="posts">
         {% for post in posts.items %}
             <article class="media content-section">
