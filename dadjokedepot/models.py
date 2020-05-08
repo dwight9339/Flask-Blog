@@ -15,6 +15,8 @@ class User(db.Model, UserMixin):
     imageFile = db.Column(db.String(20), nullable=False, default="default.jpg")
     password = db.Column(db.String(60), nullable=False)
     dateJoined = db.Column(db.DateTime, nullable = False, default=datetime.utcnow)
+    isModerator = db.Column(db.Boolean, default=False, nullable=False)
+
     posts = db.relationship("Post", backref="author", lazy=True)
     liked = db.relationship('PostLike', foreign_keys='PostLike.user_id', backref='user', lazy='dynamic')
     disliked = db.relationship('PostDislike', foreign_keys='PostDislike.user_id', backref='user', lazy='dynamic')
