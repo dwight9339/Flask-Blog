@@ -5,6 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
 from dadjokedepot.config import Config
+from flask_migrate import Migrate
 
 # Create app
 app = Flask(__name__)
@@ -17,6 +18,7 @@ loginManager = LoginManager(app)
 loginManager.login_view = "users.login"
 loginManager.login_message_category = "info"
 mail = Mail(app)
+migrate = Migrate(app, db)
 
 # Import blueprints
 from dadjokedepot.users.routes import users

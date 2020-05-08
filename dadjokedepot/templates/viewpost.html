@@ -7,7 +7,7 @@
             <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.imageFile) }}">
             <a href="{{ url_for('users.user_page', username=post.author.username) }}" class="text-muted">{{ post.author.username }}</a>
             <small class="text-muted ml-2">{{ post.dateCreated.strftime("%m-%d-%Y") }}</small>
-            {% if post.author == current_user %}
+            {% if post.author == current_user or current_user.isModerator %}
                 <a href="{{ url_for('posts.update_post', post_id=post.id) }}" class="text-muted ml-2">Update</a>
                 <button type="button" class="btn btn-danger btn-sm mb-2 ml-2" data-toggle="modal" data-target="#deleteModal">Delete</button>
             {% endif %}
@@ -52,7 +52,7 @@
         <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + comment.user.imageFile) }}">
         <a href="{{ url_for('users.user_page', username=post.author.username) }}" class="text-muted">{{ comment.user.username }}</a>
         <small class="text-muted ml-2">{{ comment.timestamp.strftime("%m-%d-%Y") }}</small>
-        {% if current_user == comment.user %}
+        {% if current_user == comment.user or current_user.isModerator %}
           <a class="ml-2" href="{{ url_for('posts.delete_comment', comment_id=comment.id) }}">Delete</a>
         {% endif %}
       </div>
