@@ -6,6 +6,9 @@
             <h1 class="mb-3">{{ user.username }}</h1>
             <h6>Member since: {{ user.dateJoined.strftime("%m-%d-%Y") }}</h6>
         </div>
+        {% if current_user.isModerator %}
+            <a href="{{ url_for('users.delete_profile_pic', username=user.username) }}">Remove profile image</a>
+        {% endif %}
     </div>
     <h2>Posts</h2>
     {% for post in posts.items %}

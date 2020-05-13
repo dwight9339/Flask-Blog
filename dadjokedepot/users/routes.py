@@ -108,3 +108,12 @@ def reset_token(token):
         return redirect(url_for("users.login"))
         
     return render_template("resetPassword.html", title="Reset Password", form=form)
+
+@users.route("/delete_profile_pic/<string:username>")
+def delete_profile_pic(username):
+    if not current_user.isModerator:
+        abort(403)
+    user = User.query.filter_by(username=username).first_or_404()
+    user.imageFile = "default.jpg"
+    db.session.commit()
+    return redirect(url_for("users.user_page", username=username))
